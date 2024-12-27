@@ -32,47 +32,26 @@ jobs:
           fi
           npm ci
 
-      # Step 4: Run Frontend in Development Mode
-      - name: Run Frontend
-        run: |
-          cd client
-          npm run dev &
-          sleep 10 # Wait for the server to initialize
-
-      # Step 5: Install Backend Dependencies
-      - name: Install Backend Dependencies
-        run: |
-          cd server
-          if [ ! -f package-lock.json ]; then
-            npm install
-          fi
-          npm ci
-
-      # Step 6: Run Backend in Development Mode
-      - name: Run Backend
-        run: |
-          cd server
-          npm run dev &
-          sleep 10 # Wait for the server to initialize
-
-      # Step 7: Test Frontend and Backend
-      - name: Test Frontend and Backend
-        run: |
-          # Add integration tests or other checks here
-          echo "Running tests..."
-
-      # Step 8: Deploy Frontend (Production Build)
+      # Step 4: Build the Frontend
       - name: Build Frontend
         run: |
           cd client
           npm run build
 
+      # Step 5: Check if the build directory exists (for debugging)
+      - name: Verify Build Directory
+        run: |
+          ls -l client/build
+
+      # Step 6: Upload Artifacts
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v1
         with:
           name: "github-pages"
           path: client/build
+          retention-days: 1
 
+      # Step 7: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v1
         with:
