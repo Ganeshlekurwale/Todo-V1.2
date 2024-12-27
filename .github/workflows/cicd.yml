@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: CI/CD for Frontend and Backend
 on:
   push:
     branches: [main]
@@ -9,24 +9,70 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-deploy:
+  # Test Frontend and Backend
+  test-and-deploy:
     runs-on: ubuntu-latest
     steps:
+      # Step 1: Checkout the Repository
       - name: Checkout Source
         uses: actions/checkout@v4
+
+      # Step 2: Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Install Dependencies
-        run: npm ci
-      - name: Build Project
-        run: npm run build
-      - name: Upload artifacts
+
+      # Step 3: Install Frontend Dependencies
+      - name: Install Frontend Dependencies
+        run: |
+          cd client
+          if [ ! -f package-lock.json ]; then
+            npm install
+          fi
+          npm ci
+
+      # Step 4: Run Frontend in Development Mode
+      - name: Run Frontend
+        run: |
+          cd client
+          npm run dev &
+          sleep 10 # Wait for the server to initialize
+
+      # Step 5: Install Backend Dependencies
+      - name: Install Backend Dependencies
+        run: |
+          cd server
+          if [ ! -f package-lock.json ]; then
+            npm install
+          fi
+          npm ci
+
+      # Step 6: Run Backend in Development Mode
+      - name: Run Backend
+        run: |
+          cd server
+          npm run dev &
+          sleep 10 # Wait for the server to initialize
+
+      # Step 7: Test Frontend and Backend
+      - name: Test Frontend and Backend
+        run: |
+          # Add integration tests or other checks here
+          echo "Running tests..."
+
+      # Step 8: Deploy Frontend (Production Build)
+      - name: Build Frontend
+        run: |
+          cd client
+          npm run build
+
+      - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v1
         with:
           name: "github-pages"
-          path: build
+          path: client/build
+
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v1
         with:
