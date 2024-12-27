@@ -45,7 +45,7 @@ jobs:
 
       # Step 6: Upload Artifacts
       - name: Upload Artifacts
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v4
         with:
           name: "github-pages"
           path: client/dist
@@ -53,7 +53,7 @@ jobs:
 
       # Step 7: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           artifact_name: "github-pages"
