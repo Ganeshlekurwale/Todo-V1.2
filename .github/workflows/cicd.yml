@@ -38,17 +38,17 @@ jobs:
           cd client
           npm run build
 
-      # Step 5: Check if the build directory exists (for debugging)
+      # Step 5: Check if the dist directory exists (for debugging)
       - name: Verify Build Directory
         run: |
-          ls -l client/build
+          ls -l client/dist
 
       # Step 6: Upload Artifacts
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v1
         with:
           name: "github-pages"
-          path: client/build
+          path: client/dist
           retention-days: 1
 
       # Step 7: Deploy to GitHub Pages
