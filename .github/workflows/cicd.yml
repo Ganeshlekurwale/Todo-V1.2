@@ -1,4 +1,5 @@
-name: CI/CD for Frontend and Backend
+name: CI/CD for Frontend
+
 on:
   push:
     branches: [main]
@@ -9,50 +10,42 @@ permissions:
   id-token: write
 
 jobs:
-  # Test Frontend and Backend
-  test-and-deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout the Repository
+      # Step 1: Checkout code
       - name: Checkout Source
         uses: actions/checkout@v4
 
       # Step 2: Setup Node.js
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      # Step 3: Install Frontend Dependencies
-      - name: Install Frontend Dependencies
+      # Step 3: Install frontend dependencies
+      - name: Install Dependencies
         run: |
           cd client
-          if [ ! -f package-lock.json ]; then
-            npm install
-          fi
+          npm install
           npm ci
 
-      # Step 4: Build the Frontend
+      # Step 4: Build the frontend app
       - name: Build Frontend
         run: |
           cd client
           npm run build
 
-      # Step 5: Check if the dist directory exists (for debugging)
-      - name: Verify Build Directory
-        run: |
-          ls -l client/dist
-
-      # Step 6: Upload Artifacts
+      # Step 5: Upload the build artifacts for GitHub Pages
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v2
         with:
-          name: "github-pages"
+          name: github-pages
           path: client/dist
-          retention-days: 1
 
-      # Step 7: Deploy to GitHub Pages
+      # Step 6: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          artifact_name: "github-pages"
+          artifact_name: github-pages
