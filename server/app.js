@@ -7,10 +7,10 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
+const app = express();
+
 dotenv.config();
 connectDB();
-
-const app = express();
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,5 +25,10 @@ app.use(
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/todo", todoRouter);
 
-// Export the app as a serverless function
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
 export default app;
