@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "server/app.js",   
+      "src": "app.js",   
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/v1/todo",
-      "dest": "/server/api/todo.js"  
+      "dest": "/api/todo.js"  
     }
   ]
 }
