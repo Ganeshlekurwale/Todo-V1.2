@@ -26,7 +26,7 @@ Make sure you have the following installed on your system:
 
 1. **Clone the repository**:  
    ```bash
-   git clone https://github.com/your-username/mern-todo-app.git
+   git clone https://github.com/Ganeshlekurwale/mern-todo-app.git
    ```
 
 2. **Navigate to the project directory**:  
@@ -116,6 +116,6 @@ This project is licensed under the [MIT License](LICENSE).
 
 ### 💡 About the Author
 
-Built with ❤️ by [Your Name](https://github.com/your-username).  
+Built with ❤️ by Ganesh.  
 
 Have any feedback or suggestions? Feel free to reach out or open an issue!
