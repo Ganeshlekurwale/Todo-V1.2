@@ -17,8 +17,28 @@ const Home = () => {
   const [todos, setTodos] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [isEditing, setIsEditing] = useState(false); // Track edit mode
-  const [editTodoId, setEditTodoId] = useState(null); // Store the ID of the todo being edited
+  const [isEditing, setIsEditing] = useState(false); 
+  const [editTodoId, setEditTodoId] = useState(null); 
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:8000/api/v1/user/status",
+          {
+            withCredentials: true,
+          }
+        );
+        if (res.status !== 200) {
+          navigate("/login");
+        }
+      } catch (error) {
+        navigate("/login");
+      }
+    };
+
+    checkLoginStatus();
+  }, [navigate]);
 
   const handleTodoSubmit = async () => {
     if (isEditing) {
