@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
+import config from "config";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import config from "./config"; // Import dynamic baseURL configuration
 
 const Login = () => {
   const navigate = useNavigate();

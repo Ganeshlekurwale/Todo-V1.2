@@ -13,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import config from "./config"; // Import the config file
+import config from "config";
 
 const Home = () => {
   const [todos, setTodos] = useState([]);
