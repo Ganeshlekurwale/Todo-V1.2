@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Make sure to install and use react-router-dom
+import { useNavigate } from "react-router-dom"; 
 import Navbar from "./Navbar";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -31,10 +31,10 @@ const Home = () => {
           { withCredentials: true }
         );
         if (res.status !== 200) {
-          navigate("/login"); // Redirect to login if not authenticated
+          navigate("/login"); 
         }
       } catch (error) {
-        navigate("/login"); // Redirect to login on error
+        navigate("/login"); 
       }
     };
 
