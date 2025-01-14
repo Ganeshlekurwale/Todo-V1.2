@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Ensure to install react-router-dom
 import Navbar from "./Navbar";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -17,20 +18,23 @@ const Home = () => {
   const [todos, setTodos] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [isEditing, setIsEditing] = useState(false); 
-  const [editTodoId, setEditTodoId] = useState(null); 
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTodoId, setEditTodoId] = useState(null);
+  const [loading, setLoading] = useState(true); // New state to manage loading
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
         const res = await axios.get(
           "http://localhost:8000/api/v1/user/status",
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
         if (res.status !== 200) {
           navigate("/login");
+        } else {
+          setLoading(false); // Stop loading when user is authenticated
         }
       } catch (error) {
         navigate("/login");
@@ -42,18 +46,12 @@ const Home = () => {
 
   const handleTodoSubmit = async () => {
     if (isEditing) {
-      // Update todo
       try {
         const res = await axios.put(
           `http://localhost:8000/api/v1/todo/${editTodoId}`,
+          { title, description },
           {
-            title,
-            description,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             withCredentials: true,
           }
         );
@@ -64,7 +62,7 @@ const Home = () => {
               todo._id === editTodoId ? { ...todo, title, description } : todo
             )
           );
-          setIsEditing(false); // Exit edit mode
+          setIsEditing(false);
           setTitle("");
           setDescription("");
         }
@@ -73,18 +71,12 @@ const Home = () => {
         console.log(error);
       }
     } else {
-      // Add new todo
       try {
         const res = await axios.post(
           "http://localhost:8000/api/v1/todo",
+          { title, description },
           {
-            title,
-            description,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             withCredentials: true,
           }
         );
@@ -112,9 +104,7 @@ const Home = () => {
     try {
       const res = await axios.delete(
         `http://localhost:8000/api/v1/todo/${id}`,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       if (res.status === 200) {
         toast.success("Todo deleted successfully");
@@ -127,20 +117,25 @@ const Home = () => {
   };
 
   useEffect(() => {
-    try {
-      const getTodos = async () => {
+    const getTodos = async () => {
+      try {
         const res = await axios.get("http://localhost:8000/api/v1/todo", {
           withCredentials: true,
         });
         if (res.status === 200) {
           setTodos(res.data.todos);
         }
-      };
-      getTodos();
-    } catch (error) {
-      console.log(error);
-    }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getTodos();
   }, []);
+
+  if (loading) {
+    return <div className="grid place-items-center h-screen">Loading...</div>;
+  }
 
   return (
     <div className="w-full h-screen">
@@ -168,7 +163,6 @@ const Home = () => {
           <Card
             key={todo._id}
             className="w-full bg-zinc-50 dark:bg-zinc-950 dark:text-zinc-50 p-2"
-            variant="outlined shadow md"
           >
             <CardHeader>
               <CardTitle>{todo.title}</CardTitle>
