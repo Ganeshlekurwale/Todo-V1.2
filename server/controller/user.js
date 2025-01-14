@@ -2,7 +2,7 @@ import { User } from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export const register = async (req, res) => {
+export const signup = async (req, res) => {
   try {
     const { fullname, email, password } = req.body;
     if (!fullname || !email || !password) {
@@ -12,21 +12,26 @@ export const register = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
-
     if (user) {
       return res
         .status(400)
-        .json({ success: false, message: "This email id already exists" });
+        .json({ success: false, message: "This email ID already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     await User.create({ fullname, email, password: hashedPassword });
+
     return res
       .status(201)
       .json({ success: true, message: "User created successfully" });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server error, please try again later",
+      });
   }
 };
 
@@ -54,7 +59,7 @@ export const login = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Invalid email or password" });
     }
-    const token = await jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    const token =  jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 

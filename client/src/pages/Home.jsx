@@ -1,11 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
 import Navbar from "./Navbar";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import toast from "react-hot-toast";
 import {
   Card,
   CardContent,
@@ -13,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import config from "config";
+import config from "@/config";
 
 const Home = () => {
   const [todos, setTodos] = useState([]);
@@ -115,6 +116,31 @@ const Home = () => {
     }
   };
 
+  const handleTodoToggleComplete = async (id) => {
+    try {
+      const res = await axios.put(
+        `${config.baseURL}/todo/${id}/toggle`,
+        {},
+        { withCredentials: true }
+      );
+      if (res.status === 200) {
+        toast.success("Todo completion status updated");
+        setTodos(
+          todos.map((todo) =>
+            todo._id === id
+              ? { ...todo, completed: res.data.todo.completed }
+              : todo
+          )
+        );
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Error toggling todo status"
+      );
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const getTodos = async () => {
       try {
@@ -165,9 +191,19 @@ const Home = () => {
           >
             <CardHeader>
               <CardTitle>{todo.title}</CardTitle>
-              <CardDescription>{todo.description}</CardDescription>
+              <CardDescription>
+                {todo.completed ? "Completed" : "Not Completed"}
+              </CardDescription>
             </CardHeader>
             <CardContent>
+              <Button
+                onClick={() => handleTodoToggleComplete(todo._id)}
+                size="sm"
+                variant={todo.completed ? "secondary" : "primary"}
+                className="mr-2"
+              >
+                {todo.completed ? "Mark as Incomplete" : "Mark as Complete"}
+              </Button>
               <Button
                 onClick={() => handleTodoEdit(todo)}
                 size="sm"

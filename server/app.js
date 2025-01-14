@@ -17,7 +17,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://todo-v02.vercel.app",
+      ];
+      // Allow requests with no origin (e.g., mobile apps or Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
@@ -29,9 +40,10 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Backend Series API");
 });
 
-// Check if running locally
+const PORT = process.env.PORT || 3000;
+
 if (process.env.NODE_ENV !== "production") {
-  const PORT = process.env.PORT || 3000;
+  console.log("Running in development mode");
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });

@@ -1,10 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import axios from "axios";
-import config from "config";
 import React, { useState } from "react";
+import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import config from "@/config";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -58,6 +59,7 @@ const Login = () => {
         placeholder="Password"
       />
       <Button onClick={handleLogin}>Login</Button>
+      <Button onClick={() => navigate("/signup")}>Sign Up</Button>    
     </div>
   );
 };
