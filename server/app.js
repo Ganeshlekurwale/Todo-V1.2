@@ -7,17 +7,17 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
-const app = express();
-
 dotenv.config();
 connectDB();
+
+const app = express();
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
     credentials: true,
   })
 );
@@ -25,11 +25,16 @@ app.use(
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/todo", todoRouter);
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
 app.get("/", (req, res) => {
   res.send("Welcome to the Backend Series API");
 });
+
+// Check if running locally
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+export default app;
