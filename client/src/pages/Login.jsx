@@ -4,6 +4,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import config from "./config"; // Import dynamic baseURL configuration
 
 const Login = () => {
   const navigate = useNavigate();
@@ -18,29 +19,25 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post(
-        "http://localhost:8000/api/v1/user/login",
-        user,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-      console.log(res);
+      const res = await axios.post(`${config.baseURL}/user/login`, user, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+
       if (res.status === 200) {
         toast.promise(Promise.resolve(res), {
           loading: "Logging in...",
           success: (res) => <b>{res.data.message}</b>,
-          error: (err) => <b>{err.response.data.message}</b>,
+          error: (err) => <b>{err.response?.data?.message || "Error"}</b>,
         });
 
         navigate("/");
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Login failed");
     }
   };
 

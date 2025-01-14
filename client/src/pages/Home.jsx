@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Ensure to install react-router-dom
+import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import config from "./config"; // Import the config file
 
 const Home = () => {
   const [todos, setTodos] = useState([]);
@@ -20,21 +21,20 @@ const Home = () => {
   const [description, setDescription] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editTodoId, setEditTodoId] = useState(null);
-  const [loading, setLoading] = useState(true); // New state to manage loading
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:8000/api/v1/user/status",
-          { withCredentials: true }
-        );
+        const res = await axios.get(`${config.baseURL}/user/status`, {
+          withCredentials: true,
+        });
         if (res.status !== 200) {
           navigate("/login");
         } else {
-          setLoading(false); // Stop loading when user is authenticated
+          setLoading(false);
         }
       } catch (error) {
         navigate("/login");
@@ -48,7 +48,7 @@ const Home = () => {
     if (isEditing) {
       try {
         const res = await axios.put(
-          `http://localhost:8000/api/v1/todo/${editTodoId}`,
+          `${config.baseURL}/todo/${editTodoId}`,
           { title, description },
           {
             headers: { "Content-Type": "application/json" },
@@ -67,13 +67,13 @@ const Home = () => {
           setDescription("");
         }
       } catch (error) {
-        toast.error(error.response.data.message);
+        toast.error(error.response?.data?.message || "Error updating todo");
         console.log(error);
       }
     } else {
       try {
         const res = await axios.post(
-          "http://localhost:8000/api/v1/todo",
+          `${config.baseURL}/todo`,
           { title, description },
           {
             headers: { "Content-Type": "application/json" },
@@ -87,7 +87,7 @@ const Home = () => {
           setTodos([...todos, res.data.todo]);
         }
       } catch (error) {
-        toast.error(error.response.data.message);
+        toast.error(error.response?.data?.message || "Error creating todo");
         console.log(error);
       }
     }
@@ -102,16 +102,15 @@ const Home = () => {
 
   const handleTodoDelete = async (id) => {
     try {
-      const res = await axios.delete(
-        `http://localhost:8000/api/v1/todo/${id}`,
-        { withCredentials: true }
-      );
+      const res = await axios.delete(`${config.baseURL}/todo/${id}`, {
+        withCredentials: true,
+      });
       if (res.status === 200) {
         toast.success("Todo deleted successfully");
         setTodos(todos.filter((todo) => todo._id !== id));
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Error deleting todo");
       console.log(error);
     }
   };
@@ -119,7 +118,7 @@ const Home = () => {
   useEffect(() => {
     const getTodos = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/v1/todo", {
+        const res = await axios.get(`${config.baseURL}/todo`, {
           withCredentials: true,
         });
         if (res.status === 200) {
