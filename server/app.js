@@ -21,6 +21,8 @@ app.use(
       const allowedOrigins = [
         "http://localhost:5173",
         "https://todo-v02.vercel.app",
+        "https://todo-v02.vercel.app/",
+        "https://todo-v1-2-ganeshlekurwales-projects.vercel.app/login",
       ];
       // Allow requests with no origin (e.g., mobile apps or Postman)
       if (!origin || allowedOrigins.includes(origin)) {
